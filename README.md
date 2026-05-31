@@ -265,4 +265,4 @@ The Win32 app is the recommended install vehicle because Intune handles content 
 
 ---
 
-<sub>This repository was created with the use of GenAI (ChatGPT 5.5) and reviewed by the author for accuracy.</sub>
+<sub><em>This repository was created with the use of GenAI (ChatGPT 5.5) and reviewed by the author (dcodev1702) for accuracy.</em></sub>
