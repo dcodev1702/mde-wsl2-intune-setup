@@ -45,6 +45,7 @@ The key file is [scripts/Detect-WSL2.ps1](scripts/Detect-WSL2.ps1). In Intune, i
 ```text
 .
 |-- README.md
+|-- CONTRIBUTORS.md
 |-- Intune-Build-Checklist.md
 |-- images/
 |   |-- intune_win32App_mde_wsl2_plugin_policy_completely_defined.jpg
