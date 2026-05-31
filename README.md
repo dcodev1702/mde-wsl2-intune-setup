@@ -187,6 +187,10 @@ After the next Intune Management Extension check-in, the device install status s
 
 ![Intune Win32 app status after the WSL plug-in installs](images/intune_win32App_mde_wsl2_plugin_policy_defined_after_install.jpg)
 
+Windows Update can service the plug-in after installation, so keep the Intune detection rule based on the plug-in DLL path instead of a fixed MSI product code.
+
+![Windows Update showing the latest MDE WSL2 plug-in install](images/win11-update_mde_wsl2_latest_plugin_install.jpg)
+
 On the endpoint, confirm the plug-in exists:
 
 ```powershell
@@ -204,10 +208,6 @@ Set-Location "$env:ProgramFiles\Microsoft Defender for Endpoint plug-in for WSL\
 If the health check says `Waiting for telemetry` or asks you to launch a WSL distro, start WSL, wait about five minutes, and run the health check again.
 
 ![Endpoint showing the MDE WSL plug-in installed from Intune policy](images/win11-vm_mde_wsl2_plugin_installed_from_intune_app_policy.jpg)
-
-Windows Update can service the plug-in after installation, so keep the Intune detection rule based on the plug-in DLL path instead of a fixed MSI product code.
-
-![Windows Update showing the latest MDE WSL2 plug-in install](images/win11-update_mde_wsl2_latest_plugin_install.jpg)
 
 ## Step 5: Validate Microsoft Defender visibility
 
