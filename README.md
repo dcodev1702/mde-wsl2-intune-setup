@@ -2,7 +2,7 @@
 
 This repository shows how to deploy the Microsoft Defender for Endpoint plug-in for Windows Subsystem for Linux 2 (WSL2) as a Windows Win32 app in Microsoft Intune.
 
-The goal is simple: if a Windows endpoint has WSL2, Intune should install the Defender for Endpoint WSL plug-in. If the endpoint does not have WSL2, the app should stay not applicable.
+The goal: If a Windows endpoint has WSL2 installed, Intune should install the Defender for Endpoint WSL plug-in. If the endpoint does not have WSL2, the app should stay not applicable.
 
 ## Why this is necessary
 
