@@ -1,8 +1,11 @@
-# Microsoft Defender for Endpoint WSL2 Plug-in Deployment with Intune
+# 🛡️ Microsoft Defender for Endpoint WSL2 Plug-in Deployment with Intune
 
 This repository shows how to deploy the Microsoft Defender for Endpoint plug-in for Windows Subsystem for Linux 2 (WSL2) as a Windows Win32 app in Microsoft Intune.
 
 The goal: If a Windows endpoint has WSL2 installed, Intune should install the Defender for Endpoint WSL plug-in. If the endpoint does not have WSL2, the app should stay not applicable.
+
+> [!IMPORTANT]
+> This deployment is intentionally WSL-aware. You can assign the Win32 app to a broad Windows device group while the requirement script keeps non-WSL2 devices in a not applicable state.
 
 ## Why this is necessary
 
@@ -20,7 +23,7 @@ After adding this Win32 app deployment to Intune, WSL2 devices receive the plug-
 
 ![Microsoft Defender device inventory showing the Windows host and WSL2 Linux logical device](images/xdr_defender_mde_assets_windows_and_wsl_installed.jpg)
 
-## How the solution works
+## 🧭 How the solution works
 
 The deployment uses Intune's Win32 app model with a custom requirement script:
 
@@ -34,7 +37,10 @@ The deployment uses Intune's Win32 app model with a custom requirement script:
 
 The key file is [scripts/Detect-WSL2.ps1](scripts/Detect-WSL2.ps1). In Intune, it is used as a custom requirement rule. It emits the exact string `WSL2_Detected` only when the device has WSL evidence and the host Defender for Endpoint sensor is ready.
 
-## Repository layout
+> [!TIP]
+> Think of the requirement script as the targeting brain for this deployment: Intune handles delivery, and the script decides whether the device is eligible.
+
+## 📁 Repository layout
 
 ```text
 .
@@ -57,9 +63,10 @@ The key file is [scripts/Detect-WSL2.ps1](scripts/Detect-WSL2.ps1). In Intune, i
     `-- Remediate-MDEWSLPluginVersion-NoOp.ps1
 ```
 
-This public repository intentionally does not include assessment documents, tenant-specific evidence reports, local secrets, the downloaded MSI, `IntuneWinAppUtil.exe`, or generated `.intunewin` files.
+> [!IMPORTANT]
+> This public repository intentionally does not include assessment documents, tenant-specific evidence reports, local secrets, the downloaded MSI, `IntuneWinAppUtil.exe`, or generated `.intunewin` files.
 
-## Prerequisites
+## ✅ Prerequisites
 
 - Microsoft Intune administrator access, or equivalent app-management permissions.
 - Target Windows devices enrolled in Intune.
@@ -69,7 +76,8 @@ This public repository intentionally does not include assessment documents, tena
 - A Microsoft Entra device group for the required assignment.
 - For virtual machines, nested virtualization must be enabled before WSL2 can work.
 
-Useful endpoint checks:
+> [!TIP]
+> Start with these quick endpoint checks before troubleshooting Intune assignment or detection behavior.
 
 ```powershell
 wsl --version
@@ -92,15 +100,19 @@ Download the MSI from the Microsoft Defender portal:
 3. Choose **Windows Subsystem for Linux 2 (plug-in)** as the operating system.
 4. Download `DefenderPlugin-x64-<version>.msi`.
 
-Keep the MSI in a clean local source folder. Do not commit the MSI to this public repo.
+> [!IMPORTANT]
+> Keep the MSI in a clean local source folder. Do not commit the MSI to this public repo. Each environment should download the current installer directly from Microsoft.
 
-## Step 2: Package the MSI as an Intune Win32 app
+## 📦 Step 2: Package the MSI as an Intune Win32 app
 
 Download the Microsoft Win32 Content Prep Tool from the official GitHub repository:
 
 - <https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool/releases>
 
 Put only the Defender plug-in MSI in the source folder, then create the `.intunewin` package. Use the exact MSI file name you downloaded, or rename the MSI locally and use that renamed file consistently in the package and install command.
+
+> [!TIP]
+> Keep the source folder limited to this one MSI. The Content Prep Tool packages everything in the source folder into the `.intunewin` payload.
 
 ```powershell
 $PluginMsi = 'DefenderPlugin-x64-1.25.825.2.msi'
@@ -109,7 +121,10 @@ $PluginMsi = 'DefenderPlugin-x64-1.25.825.2.msi'
 
 The output is a generated `.intunewin` package that you upload to Intune. Do not commit generated `.intunewin` packages to this public repo.
 
-## Step 3: Create the Windows Win32 app in Intune
+> [!IMPORTANT]
+> The `.intunewin` package is deployment content, not source material. Store it with your tenant deployment artifacts, not in this public repository.
+
+## 🧩 Step 3: Create the Windows Win32 app in Intune
 
 In the Microsoft Intune admin center, go to **Apps > Windows > Windows apps > Add > Windows app (Win32)** and upload the `.intunewin` package.
 
@@ -158,9 +173,15 @@ Value:                                         WSL2_Detected
 
 This is the part that makes the app WSL-aware. The requirement script returns `WSL2_Detected` only when WSL2 is present and the Windows Defender for Endpoint sensor is onboarded and running. Devices without WSL2 are not applicable, so they do not receive the plug-in.
 
+> [!IMPORTANT]
+> The requirement value must match exactly: `WSL2_Detected`. Any typo, casing change, or extra whitespace can cause Intune to mark the app not applicable.
+
 ### Detection Rules
 
 Use a file detection rule instead of a fixed MSI product code. The plug-in can be serviced through Windows Update, and product codes can change across major upgrade servicing. The DLL path is more stable.
+
+> [!IMPORTANT]
+> Prefer the DLL file detection rule over MSI ProductCode detection. Windows Update servicing can change MSI registration details while the plug-in remains installed and healthy on disk.
 
 ```text
 Rule type:        File
@@ -181,13 +202,16 @@ Assign the Win32 app as **Required** to a device group. The custom requirement s
 
 ![Completed Intune Win32 app policy definition](images/intune_win32App_mde_wsl2_plugin_policy_completely_defined.jpg)
 
-## Step 4: Validate Intune installation
+## 🔎 Step 4: Validate Intune installation
 
 After the next Intune Management Extension check-in, the device install status should move from zero installs to an installed device count.
 
 ![Intune Win32 app status after the WSL plug-in installs](images/intune_win32App_mde_wsl2_plugin_policy_defined_after_install.jpg)
 
 Windows Update can service the plug-in after installation, so keep the Intune detection rule based on the plug-in DLL path instead of a fixed MSI product code.
+
+> [!TIP]
+> This is why the detection rule checks for `DefenderforEndpointPlug-in.dll` instead of tying app detection to the original MSI product code.
 
 ![Windows Update showing the latest MDE WSL2 plug-in install](images/win11-update_mde_wsl2_latest_plugin_install.jpg)
 
@@ -207,11 +231,17 @@ Set-Location "$env:ProgramFiles\Microsoft Defender for Endpoint plug-in for WSL\
 
 If the health check says `Waiting for telemetry` or asks you to launch a WSL distro, start WSL, wait about five minutes, and run the health check again.
 
+> [!TIP]
+> The plug-in may need a few minutes after first WSL launch before health and telemetry checks look complete.
+
 ![Endpoint showing the MDE WSL plug-in installed from Intune policy](images/win11-vm_mde_wsl2_plugin_installed_from_intune_app_policy.jpg)
 
-## Step 5: Validate Microsoft Defender visibility
+## 🛰️ Step 5: Validate Microsoft Defender visibility
 
 After the plug-in initializes, the WSL2 instance should appear in Microsoft Defender as a Linux logical device. Microsoft notes that this can take up to 30 minutes.
+
+> [!TIP]
+> Filter by the `WSL2` tag in Defender device inventory when validating rollout. The WSL logical device should map back to the Windows host through `HostDeviceId`.
 
 In the Defender portal, go to **Assets > Devices** and filter by the host name or the `WSL2` tag.
 
@@ -243,7 +273,10 @@ The [scripts](scripts) directory also contains an inventory-only Intune remediat
 
 The Win32 app is the recommended install vehicle because Intune handles content delivery, detection, retries, and app reporting natively. Use the inventory scripts when you want recurring visibility into installed plug-in versions.
 
-## Common issues
+> [!TIP]
+> Use the inventory scripts for reporting and version visibility; keep installation in the Win32 app workflow unless you have a specific reason to use remediations for deployment.
+
+## ⚠️ Common issues
 
 - The wrong MSI was packaged. `DefenderPlugin-x64-<version>.msi` is the Defender security plug-in. `IntuneWSLPluginInstaller.msi` is the separate Intune WSL compliance plug-in.
 - WSL was installed but no distro has ever been launched. Launch the distro once so registration and telemetry are available.
