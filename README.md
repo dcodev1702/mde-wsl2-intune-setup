@@ -163,10 +163,10 @@ Then add a custom script requirement using [scripts/Detect-WSL2.ps1](scripts/Det
 
 ```text
 Run script as 32-bit process on 64-bit clients: No
-Enforce script signature check:                No
-Select output data type:                       String
-Operator:                                      Equals
-Value:                                         WSL2_Detected
+Enforce script signature check:                 No
+Select output data type:                        String
+Operator:                                       Equals
+Value:                                          WSL2_Detected
 ```
 
 ![Intune custom requirement rule for WSL2 detection](images/intune_win32App_mde_wsl2_plugin_policy_defined_requirement_rule_policy.jpg)
