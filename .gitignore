@@ -1,0 +1,13 @@
+# Local secrets and assessment artifacts
+.nvd_api_key
+*.docx
+
+# Downloaded vendor tooling and generated Intune packages
+IntuneWinAppUtil.exe
+*.msi
+*.intunewin
+
+# Windows and editor noise
+Thumbs.db
+.DS_Store
+.vscode/
