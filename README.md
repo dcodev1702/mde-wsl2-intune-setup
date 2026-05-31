@@ -262,3 +262,7 @@ The Win32 app is the recommended install vehicle because Intune handles content 
 - [Add, assign, and monitor a Win32 app in Microsoft Intune](https://learn.microsoft.com/en-us/intune/app-management/deployment/add-win32)
 - [Microsoft Win32 Content Prep Tool](https://github.com/microsoft/Microsoft-Win32-Content-Prep-Tool)
 - [Manage WSL settings with Microsoft Intune](https://learn.microsoft.com/en-us/windows/wsl/intune)
+
+---
+
+<sub>This repository was created with the use of GenAI (ChatGPT 5.5) and reviewed by the author for accuracy.</sub>
