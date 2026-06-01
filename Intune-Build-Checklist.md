@@ -10,7 +10,25 @@ so it provisions **only** on devices where WSL2 is present.
 - [ ] Target devices are Windows 10 2004+ (build 19044+) or Windows 11, **x64** (not ARM64, not multi-session).
 - [ ] Host is **onboarded to Defender for Endpoint** and the sensor is in **Active** mode.
 - [ ] WSL2 is at **version 2.0.7.0+** (`wsl --version`); update with `wsl --update` if needed.
-- [ ] For VMs: **nested virtualization** is enabled (required for WSL2's Hyper-V boundary).
+- [ ] For VMs: **nested virtualization** is enabled (required for WSL2's Hyper-V boundary). On the **Hyper-V host**, with the guest VM **powered off**, expose virtualization extensions to the CPU and enable MAC address spoofing so the nested WSL2 VM gets network connectivity:
+      ```powershell
+      # Run on the Hyper-V HOST in an elevated PowerShell session; VM must be OFF
+      $VMName = '<your-vm-name>'
+
+      # 1. Expose virtualization extensions to the guest CPU (enables nested virtualization)
+      Stop-VM -Name $VMName -Force -ErrorAction SilentlyContinue
+      Set-VMProcessor -VMName $VMName -ExposeVirtualizationExtensions $true
+
+      # 2. Enable MAC address spoofing on the VM's network interface (required for nested VM networking)
+      Get-VMNetworkAdapter -VMName $VMName | Set-VMNetworkAdapter -MacAddressSpoofing On
+
+      # 3. (Recommended) Give the guest enough memory and disable dynamic memory
+      Set-VMMemory -VMName $VMName -DynamicMemoryEnabled $false -StartupBytes 8GB
+
+      # 4. Start the VM and verify
+      Start-VM -Name $VMName
+      Get-VMProcessor -VMName $VMName | Select-Object Name, ExposeVirtualizationExtensions
+      ```
 - [ ] You have an **Intune Administrator** (or equivalent) role.
 - [ ] A target **Microsoft Entra device group** exists for assignment.
 
