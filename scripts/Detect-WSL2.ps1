@@ -28,6 +28,12 @@
         This enforces the install ordering: the host MUST be onboarded to Defender
         for Endpoint before the WSL plug-in is provisioned. A WSL machine that is not
         yet onboarded stays "Not applicable" until its sensor is live.
+
+.AUTHOR
+    dcodev1702 & GitHub Copilot (GPT 5.5)
+
+.DATE
+    2026-06-01
 #>
 
 $ErrorActionPreference = 'SilentlyContinue'

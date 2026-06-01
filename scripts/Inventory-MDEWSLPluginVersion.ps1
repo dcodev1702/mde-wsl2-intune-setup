@@ -11,6 +11,12 @@
       1. Standard uninstall registry DisplayVersion
       2. DefenderforEndpointPlug-in.dll ProductVersion
       3. DefenderforEndpointPlug-in.dll FileVersion
+
+.AUTHOR
+    dcodev1702 & GitHub Copilot (GPT 5.5)
+
+.DATE
+    2026-06-01
 #>
 
 $ErrorActionPreference = 'SilentlyContinue'
