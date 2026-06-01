@@ -1,6 +1,7 @@
 # Local secrets and assessment artifacts
 .nvd_api_key
 *.docx
+*.csv
 
 # Downloaded vendor tooling and generated Intune packages
 IntuneWinAppUtil.exe
